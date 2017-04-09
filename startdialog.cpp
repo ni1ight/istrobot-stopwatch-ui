@@ -187,7 +187,7 @@ void StartDialog::drawScene()
 
     QDir dir(getResourcesPath());
     QString bgImagePath = dir.absoluteFilePath(BG_PATH);
-    QMessageBox::information(this, "Image Viewer", bgImagePath);
+    //QMessageBox::information(this, "Image Viewer", bgImagePath);
     QImage image_bg(bgImagePath);
 
     if (image_bg.isNull())
