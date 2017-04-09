@@ -43,6 +43,7 @@ void StartDialog::setMemberVariables()
     m_bMeasuring = false;
     m_bSerialOpen = false;
 
+    //delete for release
     drawScene();
     m_pAnimTimer->start(ANIM_PERIOD_MS);
 }
@@ -189,7 +190,7 @@ void StartDialog::drawScene()
     m_pView->fitInView(QRect(1, 1, 1918, 1078));
     m_pView->installEventFilter(this);
 
-    m_pTimeText = m_pScene->addText("00.00.00");
+    m_pTimeText = m_pScene->addText("00:00.00");
     m_pTimeText->setDefaultTextColor(Qt::white);
     m_pTimeText->setPos(22, 52);
     m_pTimeText->setScale(36.0f);
