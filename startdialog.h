@@ -22,7 +22,7 @@
 #define RESET_KEY       82
 
 #if defined(Q_OS_OSX)
-    #define FONT SCALE  28.0f
+    #define FONT_SCALE  28.0f
 #else
     #define FONT_SCALE  36.0f
 #endif
