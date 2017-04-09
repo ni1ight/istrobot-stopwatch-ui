@@ -11,10 +11,11 @@
 #include <QTime>
 #include <QTimer>
 #include <QKeyEvent>
+#include <QDir>
 
 #define MAXSERIALS      30
 #define ANIM_PERIOD_MS  30
-#define BG_PATH         "D:\\LP\\[LP] RGT\\Istrobot_casomiera\\casomiera\\images\\bg.jpg"
+#define BG_PATH         "images/bg.jpg"
 
 namespace Ui {
 class SerialSettings;

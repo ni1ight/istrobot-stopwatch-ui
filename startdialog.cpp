@@ -1,6 +1,15 @@
 #include "startdialog.h"
 #include "ui_startdialog.h"
 
+QString getResourcesPath()
+{
+#if defined(Q_OS_OSX)
+    return QApplication::applicationDirPath() + "/../Resources/";
+#else
+    return QApplication::applicationDirPath() + "/";
+#endif
+}
+
 StartDialog::StartDialog(QWidget *parent) : QDialog(parent), m_pUi(new Ui::SerialSettings)
 {
     m_pUi->setupUi(this);
@@ -177,7 +186,10 @@ void StartDialog::drawScene()
     m_pView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_pView->setRenderHint(QPainter::Antialiasing);
 
-    QImage image_bg(BG_PATH);
+    QDir dir(getResourcesPath());
+    QString bgImagePath = dir.absoluteFilePath(BG_PATH);
+    QMessageBox::information(this, "Image Viewer", bgImagePath);
+    QImage image_bg(bgImagePath);
 
     if (image_bg.isNull())
     {

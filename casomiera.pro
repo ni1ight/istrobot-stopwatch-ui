@@ -18,3 +18,12 @@ SOURCES += main.cpp\
 HEADERS  += startdialog.h
 
 FORMS    += startdialog.ui
+
+macx {
+  ImageFiles.files = images
+  ImageFiles.path = Contents/Resources
+  QMAKE_BUNDLE_DATA += ImageFiles
+}
+
+
+
