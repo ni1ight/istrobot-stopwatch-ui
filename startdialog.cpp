@@ -204,5 +204,5 @@ void StartDialog::drawScene()
     m_pTimeText = m_pScene->addText(INIT_STR);
     m_pTimeText->setDefaultTextColor(Qt::white);
     m_pTimeText->setPos(22, 52);
-    m_pTimeText->setScale(36.0f);
+    m_pTimeText->setScale(FONT_SCALE);
 }
