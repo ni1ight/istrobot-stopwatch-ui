@@ -16,7 +16,7 @@
 
 #define MAXSERIALS      30
 #define ANIM_PERIOD_MS  30
-#define BG_PATH         "images/bg.jpg"
+#define BG_PATH         ":/bg.jpg"
 #define INIT_STR        "00:00.00"
 #define START_KEY       32
 #define RESET_KEY       82
