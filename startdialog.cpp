@@ -78,6 +78,8 @@ void StartDialog::resetTimer()
     {
         m_pSerial->write("R\n");
     }
+
+    setTime(0);
 }
 
 void StartDialog::setTime(int nMilliseconds)
@@ -113,7 +115,6 @@ bool StartDialog::eventFilter(QObject *obj, QEvent *event)
         else if (nKey == RESET_KEY)
         {
             resetTimer();
-            setTime(0);
         }
     }
 
@@ -187,7 +188,6 @@ void StartDialog::drawScene()
 
     QDir dir(getResourcesPath());
     QString bgImagePath = dir.absoluteFilePath(BG_PATH);
-    //QMessageBox::information(this, "Image Viewer", bgImagePath);
     QImage image_bg(bgImagePath);
 
     if (image_bg.isNull())
