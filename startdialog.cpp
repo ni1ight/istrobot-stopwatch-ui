@@ -48,6 +48,8 @@ void StartDialog::setMemberVariables()
     connect(m_pSerial, SIGNAL(readyRead()), this, SLOT(on_serial_received()));
     connect(m_pAnimTimer, SIGNAL(timeout()), this, SLOT(on_anim_timer()));
 
+    m_pView->installEventFilter(this);
+
     m_bMeasuring = false;
     m_bSerialOpen = false;
 
@@ -199,7 +201,6 @@ void StartDialog::drawScene()
     QGraphicsPixmapItem* bg = m_pScene->addPixmap(QPixmap::fromImage(image_bg));
     m_pView->showFullScreen();
     m_pView->fitInView(QRect(1, 1, 1918, 1078));
-    m_pView->installEventFilter(this);
 
     m_pTimeText = m_pScene->addText(INIT_STR);
     m_pTimeText->setDefaultTextColor(Qt::white);
