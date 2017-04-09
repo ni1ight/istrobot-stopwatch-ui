@@ -19,10 +19,9 @@ StartDialog::~StartDialog()
 
 void StartDialog::setMemberVariables()
 {
-    for (int i = 1; i < MAXSERIALS + 1; i++)
+    Q_FOREACH(QSerialPortInfo port, QSerialPortInfo::availablePorts())
     {
-        QString qsCom = QString("com") + QString::number(i);
-        m_pUi->comboBox_comport->addItem(qsCom);
+        m_pUi->comboBox_comport->addItem(port.portName());
     }
 
     m_pSerial = new QSerialPort(this);
@@ -91,7 +90,7 @@ bool StartDialog::eventFilter(QObject *obj, QEvent *event)
         QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
         int nKey = keyEvent->key();
 
-        if (nKey == 32)
+        if (nKey == START_KEY)
         {
             if (m_bMeasuring)
             {
@@ -102,7 +101,7 @@ bool StartDialog::eventFilter(QObject *obj, QEvent *event)
                 startTimer();
             }
         }
-        else if (nKey == 82)
+        else if (nKey == RESET_KEY)
         {
             resetTimer();
             setTime(0);
@@ -190,7 +189,7 @@ void StartDialog::drawScene()
     m_pView->fitInView(QRect(1, 1, 1918, 1078));
     m_pView->installEventFilter(this);
 
-    m_pTimeText = m_pScene->addText("00:00.00");
+    m_pTimeText = m_pScene->addText(INIT_STR);
     m_pTimeText->setDefaultTextColor(Qt::white);
     m_pTimeText->setPos(22, 52);
     m_pTimeText->setScale(36.0f);

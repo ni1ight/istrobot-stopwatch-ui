@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QSerialPort>
+#include <QSerialPortInfo>
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QPixmap>
@@ -14,10 +15,14 @@
 
 #define MAXSERIALS      30
 #define ANIM_PERIOD_MS  30
-#define BG_PATH         "D:\\LP\\[LP] RGT\\Istrobot_casomiera\\casomiera\\images\\bg.jpg"
+#define BG_PATH         "D:\\Coding Projects\\istrobot-stopwatch-ui\\images\\bg.jpg"
+#define INIT_STR        "00:00.00"
+#define START_KEY       32
+#define RESET_KEY       82
 
-namespace Ui {
-class SerialSettings;
+namespace Ui
+{
+    class SerialSettings;
 }
 
 class StartDialog : public QDialog
