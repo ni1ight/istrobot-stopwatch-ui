@@ -14,6 +14,8 @@
 #include <QKeyEvent>
 #include <QDir>
 
+//#include "communicator.h"
+
 #define MAXSERIALS      30
 #define ANIM_PERIOD_MS  15
 #define BG_PATH         ":/bg.jpg"

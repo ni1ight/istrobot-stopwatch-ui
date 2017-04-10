@@ -38,7 +38,7 @@ void StartDialog::setMemberVariables()
     m_pSerial->setStopBits(QSerialPort::OneStop);
     m_pSerial->setFlowControl(QSerialPort::NoFlowControl);
 
-    connect(m_pSerial, SIGNAL(readyRead()), this, SLOT(on_serial_received()));
+    //connect(m_pSerial, SIGNAL(readyRead()), this, SLOT(on_serial_received()));
     connect(m_pAnimTimer, SIGNAL(timeout()), this, SLOT(on_anim_timer()));
 
     m_pView->installEventFilter(this);
@@ -48,8 +48,8 @@ void StartDialog::setMemberVariables()
     m_pFinalElapsed = 0;
 
     //delete for release
-    drawScene();
-    m_pAnimTimer->start(ANIM_PERIOD_MS);
+    //drawScene();
+    //m_pAnimTimer->start(ANIM_PERIOD_MS);
 }
 
 void StartDialog::startTimer()
@@ -96,8 +96,11 @@ bool StartDialog::eventFilter(QObject *obj, QEvent *event)
         if (nKey == START_KEY)
         {
             if (m_bMeasuring)
+            {
                 stopTimer();
-            else {
+            }
+            else
+            {
                 m_pFinalElapsed = 0;
                 startTimer();
             }
@@ -132,15 +135,22 @@ void StartDialog::on_pushButton_connect_clicked()
 
 void StartDialog::on_anim_timer()
 {
+    on_serial_received();
+
     if (m_pFinalElapsed != 0)
+    {
       renderTime(m_pFinalElapsed);
+    }
     else
+    {
       renderTime(m_pTime->elapsed());
+    }
 }
 
 void StartDialog::on_serial_received()
 {
-    while (m_pSerial->canReadLine()) {
+    while (m_pSerial->canReadLine())
+    {
         QString qsMessage = m_pSerial->readLine();
         qsMessage = qsMessage.trimmed();
 
