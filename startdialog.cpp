@@ -1,6 +1,8 @@
 #include "startdialog.h"
 #include "ui_startdialog.h"
 
+#include <QDebug>
+
 StartDialog::StartDialog(QWidget *parent) : QDialog(parent), m_pUi(new Ui::SerialSettings)
 {
     m_pUi->setupUi(this);
@@ -43,6 +45,7 @@ void StartDialog::setMemberVariables()
 
     m_bMeasuring = false;
     m_bSerialOpen = false;
+    m_pFinalElapsed = 0;
 
     //delete for release
     drawScene();
@@ -57,32 +60,28 @@ void StartDialog::startTimer()
 
 void StartDialog::stopTimer()
 {
+    m_pFinalElapsed = m_pTime->elapsed();
+    m_pTime = new QTime();
     m_bMeasuring = false;
 }
 
-void StartDialog::resetTimer()
+void StartDialog::resetTimer(bool reportReset)
 {
-    if (m_bMeasuring)
-    {
-        m_pTime->restart();
-    }
+    stopTimer();
+    renderTime(0);
 
-    if (m_bSerialOpen)
-    {
+    if (reportReset && m_bSerialOpen)
         m_pSerial->write("R\n");
-    }
-
-    setTime(0);
 }
 
-void StartDialog::setTime(int nMilliseconds)
+void StartDialog::renderTime(int nMilliseconds)
 {
     int nMin = nMilliseconds / 60000;
-    int nSec = (nMilliseconds - nMin * 6000) / 1000;
-    int nMil = (nMilliseconds % 1000) / 10;
+    int nSec = (nMilliseconds % 60000) / 1000;
+    int nMil = ((nMilliseconds % 60000) % 1000);
 
     QString time;
-    time.sprintf("%02d:%02d.%02d", nMin, nSec, nMil);
+    time.sprintf("%02d:%02d.%03d", nMin, nSec, nMil);
 
     m_pTimeText->setPlainText(time);
 }
@@ -97,17 +96,14 @@ bool StartDialog::eventFilter(QObject *obj, QEvent *event)
         if (nKey == START_KEY)
         {
             if (m_bMeasuring)
-            {
                 stopTimer();
-            }
             else
-            {
                 startTimer();
-            }
         }
         else if (nKey == RESET_KEY)
         {
-            resetTimer();
+            resetTimer(true);
+            renderTime(0);
         }
     }
 
@@ -134,18 +130,19 @@ void StartDialog::on_pushButton_connect_clicked()
 
 void StartDialog::on_anim_timer()
 {
-    if (m_bMeasuring)
-    {
-        setTime(m_pTime->elapsed());
-    }
+    if (m_pFinalElapsed != 0)
+      renderTime(m_pFinalElapsed);
+    else
+      renderTime(m_pTime->elapsed());
 }
 
 void StartDialog::on_serial_received()
 {
-    if (m_pSerial->canReadLine())
-    {
+    while (m_pSerial->canReadLine()) {
         QString qsMessage = m_pSerial->readLine();
         qsMessage = qsMessage.trimmed();
+
+        qDebug() << qsMessage;
 
         if (qsMessage.compare("S") == 0)
         {
@@ -157,18 +154,13 @@ void StartDialog::on_serial_received()
         }
         else if (qsMessage.compare("R") == 0)
         {
-            resetTimer();
-        }
-        else if (qsMessage.startsWith("T"))
-        {
-            qsMessage = qsMessage.mid(2);
-            setTime(qsMessage.toInt());
+            resetTimer(false);
         }
         else if (qsMessage.startsWith("F"))
         {
             qsMessage = qsMessage.mid(2);
             stopTimer();
-            setTime(qsMessage.toInt());
+            m_pFinalElapsed = qsMessage.toInt();
         }
     }
 }

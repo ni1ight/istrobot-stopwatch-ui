@@ -18,3 +18,5 @@ SOURCES += main.cpp\
 HEADERS  += startdialog.h
 
 FORMS    += startdialog.ui
+
+CONFIG += console

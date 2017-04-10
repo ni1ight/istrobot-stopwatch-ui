@@ -15,7 +15,7 @@
 #include <QDir>
 
 #define MAXSERIALS      30
-#define ANIM_PERIOD_MS  30
+#define ANIM_PERIOD_MS  15
 #define BG_PATH         ":/bg.jpg"
 #define INIT_STR        "00:00.00"
 #define START_KEY       32
@@ -42,8 +42,8 @@ public:
 
     void startTimer();
     void stopTimer();
-    void resetTimer();
-    void setTime(int nMilliseconds);
+    void resetTimer(bool reportReset);
+    void renderTime(int nMilliseconds);
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
@@ -65,6 +65,7 @@ private:
     QTimer* m_pAnimTimer;
     QGraphicsTextItem* m_pTimeText;
     QTime* m_pTime;
+    int m_pFinalElapsed;
 
     bool m_bMeasuring;
     bool m_bSerialOpen;
