@@ -13,6 +13,9 @@ StartDialog::~StartDialog()
 {
     m_pSerial->close();
 
+    m_pAnimTimer->stop();
+    m_pReadTimer->stop();
+
     delete m_pTime;
     delete m_pScene;
     delete m_pView;
@@ -30,6 +33,7 @@ void StartDialog::setMemberVariables()
     m_pScene = new QGraphicsScene();
     m_pView = new QGraphicsView(m_pScene);
     m_pAnimTimer = new QTimer(this);
+    m_pReadTimer = new QTimer(this);
     m_pSerial = new QSerialPort(this);
     m_pTime = new QTime();
 
@@ -40,6 +44,7 @@ void StartDialog::setMemberVariables()
 
     //connect(m_pSerial, SIGNAL(readyRead()), this, SLOT(on_serial_received()));
     connect(m_pAnimTimer, SIGNAL(timeout()), this, SLOT(on_anim_timer()));
+    connect(m_pReadTimer, SIGNAL(timeout()), this, SLOT(on_serial_received()));
 
     m_pView->installEventFilter(this);
 
@@ -130,13 +135,12 @@ void StartDialog::on_pushButton_connect_clicked()
         m_bSerialOpen = true;
         drawScene();
         m_pAnimTimer->start(ANIM_PERIOD_MS);
+        m_pReadTimer->start(READ_PERIOD_MS);
     }
 }
 
 void StartDialog::on_anim_timer()
 {
-    on_serial_received();
-
     if (m_pFinalElapsed != 0)
     {
       renderTime(m_pFinalElapsed);
