@@ -97,8 +97,10 @@ bool StartDialog::eventFilter(QObject *obj, QEvent *event)
         {
             if (m_bMeasuring)
                 stopTimer();
-            else
+            else {
+                m_pFinalElapsed = 0;
                 startTimer();
+            }
         }
         else if (nKey == RESET_KEY)
         {
