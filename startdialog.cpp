@@ -72,7 +72,7 @@ bool StartDialog::eventFilter(QObject *obj, QEvent *event)
         QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
         int nKey = keyEvent->key();
 
-        if (nKey == START_KEY)
+        if (nKey == Qt::Key_Space)
         {
             if (m_bMeasuring)
             {
@@ -83,12 +83,12 @@ bool StartDialog::eventFilter(QObject *obj, QEvent *event)
                 onStartTimer();
             }
         }
-        else if (nKey == RESET_KEY)
+        else if (nKey == Qt::Key_R)
         {
             emit sendReset();
             onResetTimer();
         }
-        else if (nKey == FULLSCREEN_KEY)
+        else if (nKey == Qt::Key_F)
         {
             if (m_bIsFullScreen)
             {
@@ -102,6 +102,10 @@ bool StartDialog::eventFilter(QObject *obj, QEvent *event)
             }
 
             m_pView->fitInView(QRect(1, 1, SCENE_WIDTH - 2, SCENE_HEIGHT - 2));
+        }
+        else if (nKey == Qt::Key_Escape)
+        {
+            this->deleteLater();
         }
     }
 
