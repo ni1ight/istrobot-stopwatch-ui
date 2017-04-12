@@ -24,9 +24,9 @@
 #define BG_PATH         ":/bg.jpg"
 #define FONT_PATH       ":/fonts/digital-7 (mono).ttf"
 #define INIT_STR        "00:00.000"
-#define START_KEY       32
-#define RESET_KEY       82
-#define FULLSCREEN_KEY  70
+#define START_KEY       32  // SPACE
+#define RESET_KEY       82  // R
+#define FULLSCREEN_KEY  70  // F
 #define TIMETEXT_WIDTH  1900
 #define TIMETEXT_YPOS   80
 #define SCENE_WIDTH     1920

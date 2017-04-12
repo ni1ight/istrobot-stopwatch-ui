@@ -189,7 +189,6 @@ void StartDialog::onStartTimer()
 
 void StartDialog::onStopTimer()
 {
-    m_qsActTime = toTimeStr(m_pTime->elapsed());
     m_bMeasuring = false;
     qDebug() << "Stop timer.";
 }
