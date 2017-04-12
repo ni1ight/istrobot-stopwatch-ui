@@ -1,7 +1,6 @@
-<!DOCTYPE RCC>
-<RCC version="1.0">
-    <qresource>
+<RCC>
+    <qresource prefix="/">
         <file alias="bg.jpg">images/bg.jpg</file>
+        <file>fonts/digital-7 (mono).ttf</file>
     </qresource>
 </RCC>
-

@@ -13,9 +13,11 @@ TEMPLATE = app
 RESOURCES = startdialog.qrc
 
 SOURCES += main.cpp\
-        startdialog.cpp
+        startdialog.cpp \
+    communicator.cpp
 
-HEADERS  += startdialog.h
+HEADERS  += startdialog.h \
+    communicator.h
 
 FORMS    += startdialog.ui
 

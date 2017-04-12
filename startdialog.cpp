@@ -1,8 +1,6 @@
 #include "startdialog.h"
 #include "ui_startdialog.h"
 
-#include <QDebug>
-
 StartDialog::StartDialog(QWidget *parent) : QDialog(parent), m_pUi(new Ui::SerialSettings)
 {
     m_pUi->setupUi(this);
@@ -11,10 +9,13 @@ StartDialog::StartDialog(QWidget *parent) : QDialog(parent), m_pUi(new Ui::Seria
 
 StartDialog::~StartDialog()
 {
-    m_pSerial->close();
+    if (m_bCommunicatorCreated)
+    {
+        m_pReadThread->terminate();
+        m_pReadThread->deleteLater();
+    }
 
     m_pAnimTimer->stop();
-    m_pReadTimer->stop();
 
     delete m_pTime;
     delete m_pScene;
@@ -33,62 +34,34 @@ void StartDialog::setMemberVariables()
     m_pScene = new QGraphicsScene();
     m_pView = new QGraphicsView(m_pScene);
     m_pAnimTimer = new QTimer(this);
-    m_pReadTimer = new QTimer(this);
     m_pSerial = new QSerialPort(this);
     m_pTime = new QTime();
 
-    m_pSerial->setDataBits(QSerialPort::Data8);
-    m_pSerial->setParity(QSerialPort::NoParity);
-    m_pSerial->setStopBits(QSerialPort::OneStop);
-    m_pSerial->setFlowControl(QSerialPort::NoFlowControl);
-
-    //connect(m_pSerial, SIGNAL(readyRead()), this, SLOT(on_serial_received()));
-    connect(m_pAnimTimer, SIGNAL(timeout()), this, SLOT(on_anim_timer()));
-    connect(m_pReadTimer, SIGNAL(timeout()), this, SLOT(on_serial_received()));
+    connect(m_pAnimTimer, SIGNAL(timeout()), this, SLOT(onAnimTimer()));
 
     m_pView->installEventFilter(this);
+    m_pScene->setItemIndexMethod(QGraphicsScene::NoIndex);
 
+    m_bCommunicatorCreated = false;
     m_bMeasuring = false;
-    m_bSerialOpen = false;
-    m_pFinalElapsed = 0;
-
-    //delete for release
-    //drawScene();
-    //m_pAnimTimer->start(ANIM_PERIOD_MS);
+    m_qsActTime = INIT_STR;
 }
 
-void StartDialog::startTimer()
-{
-    m_bMeasuring = true;
-    m_pTime->start();
-}
-
-void StartDialog::stopTimer()
-{
-    m_pFinalElapsed = m_pTime->elapsed();
-    m_pTime = new QTime();
-    m_bMeasuring = false;
-}
-
-void StartDialog::resetTimer(bool reportReset)
-{
-    stopTimer();
-    renderTime(0);
-
-    if (reportReset && m_bSerialOpen)
-        m_pSerial->write("R\n");
-}
-
-void StartDialog::renderTime(int nMilliseconds)
+QString StartDialog::toTimeStr(int nMilliseconds)
 {
     int nMin = nMilliseconds / 60000;
     int nSec = (nMilliseconds % 60000) / 1000;
-    int nMil = ((nMilliseconds % 60000) % 1000);
+    int nMil = (nMilliseconds % 60000) % 1000;
 
     QString time;
     time.sprintf("%02d:%02d.%03d", nMin, nSec, nMil);
 
-    m_pTimeText->setPlainText(time);
+    return time;
+}
+
+void StartDialog::renderTime()
+{    
+    m_pTimeText->setPlainText(m_qsActTime);
 }
 
 bool StartDialog::eventFilter(QObject *obj, QEvent *event)
@@ -102,83 +75,21 @@ bool StartDialog::eventFilter(QObject *obj, QEvent *event)
         {
             if (m_bMeasuring)
             {
-                stopTimer();
+                onStopTimer();
             }
             else
             {
-                m_pFinalElapsed = 0;
-                startTimer();
+                onStartTimer();
             }
         }
         else if (nKey == RESET_KEY)
         {
-            resetTimer(true);
-            renderTime(0);
+            emit sendReset();
+            onResetTimer();
         }
     }
 
     return QObject::eventFilter(obj, event);
-}
-
-void StartDialog::on_pushButton_connect_clicked()
-{
-    m_pSerial->setPortName(m_pUi->comboBox_comport->currentText());
-    m_pSerial->setBaudRate(m_pUi->spinBox_baud->value());
-
-    if (!m_pSerial->open(QIODevice::ReadWrite))
-    {
-        QMessageBox::information(this, "Serial", "Error opening serial");
-        return;
-    }
-    else
-    {
-        m_bSerialOpen = true;
-        drawScene();
-        m_pAnimTimer->start(ANIM_PERIOD_MS);
-        m_pReadTimer->start(READ_PERIOD_MS);
-    }
-}
-
-void StartDialog::on_anim_timer()
-{
-    if (m_pFinalElapsed != 0)
-    {
-      renderTime(m_pFinalElapsed);
-    }
-    else
-    {
-      renderTime(m_pTime->elapsed());
-    }
-}
-
-void StartDialog::on_serial_received()
-{
-    while (m_pSerial->canReadLine())
-    {
-        QString qsMessage = m_pSerial->readLine();
-        qsMessage = qsMessage.trimmed();
-
-        qDebug() << qsMessage;
-
-        if (qsMessage.compare("S") == 0)
-        {
-            startTimer();
-        }
-        else if (qsMessage.compare("F") == 0)
-        {
-            stopTimer();
-        }
-        else if (qsMessage.compare("R") == 0)
-        {
-            resetTimer(false);
-        }
-        else if (qsMessage.startsWith("F"))
-        {
-            qsMessage = qsMessage.mid(2);
-            stopTimer();
-            m_pFinalElapsed = qsMessage.toInt();
-        }
-    }
 }
 
 void StartDialog::drawScene()
@@ -195,12 +106,97 @@ void StartDialog::drawScene()
         return;
     }
 
-    QGraphicsPixmapItem* bg = m_pScene->addPixmap(QPixmap::fromImage(image_bg));
+    int id = QFontDatabase::addApplicationFont(FONT_PATH);
+    QString family = QFontDatabase::applicationFontFamilies(id).at(0);
+    QFont digiFont(family);
+
+    m_pScene->addPixmap(QPixmap::fromImage(image_bg));
     m_pView->showFullScreen();
-    m_pView->fitInView(QRect(1, 1, 1918, 1078));
+    m_pView->fitInView(QRect(1, 1, SCENE_WIDTH - 2, SCENE_HEIGHT - 2));
 
     m_pTimeText = m_pScene->addText(INIT_STR);
+    m_pTimeText->setFont(digiFont);
     m_pTimeText->setDefaultTextColor(Qt::white);
-    m_pTimeText->setPos(22, 52);
-    m_pTimeText->setScale(FONT_SCALE);
+
+    QRectF box = m_pTimeText->boundingRect();
+
+    m_pTimeText->setPos((SCENE_WIDTH - TIMETEXT_WIDTH) / 2, TIMETEXT_YPOS);
+    m_pTimeText->setScale(TIMETEXT_WIDTH / box.width());
+}
+
+void StartDialog::createCommunicator()
+{
+    m_pReadThread = new QThread(this);
+    m_pCommunicator = new Communicator();
+
+    connect(m_pCommunicator, SIGNAL(timerStart()), this, SLOT(onStartTimer()));
+    connect(m_pCommunicator, SIGNAL(timerFinish()), this, SLOT(onStopTimer()));
+    connect(m_pCommunicator, SIGNAL(timerReset()), this, SLOT(onResetTimer()));
+    connect(m_pCommunicator, SIGNAL(setNumber(int)), this, SLOT(onSetNumber(int)));
+    connect(m_pCommunicator, SIGNAL(reportOpen(bool)), this, SLOT(onSerialOpen(bool)));
+    connect(this, SIGNAL(sendInit(QString, int, int)), m_pCommunicator, SLOT(onInit(QString, int, int)));
+    connect(this, SIGNAL(sendReset()), m_pCommunicator, SLOT(onSendReset()));
+
+    m_pCommunicator->moveToThread(m_pReadThread);
+
+    m_pReadThread->start();
+    m_pReadThread->setPriority(QThread::HighPriority);
+
+    m_bCommunicatorCreated = true;
+}
+
+void StartDialog::on_pushButton_connect_clicked()
+{
+    createCommunicator();
+    emit sendInit(m_pUi->comboBox_comport->currentText(),
+                  m_pUi->spinBox_baud->value(), READ_PERIOD_MS);
+}
+
+void StartDialog::onAnimTimer()
+{
+    if (m_bMeasuring)
+    {
+        m_qsActTime = toTimeStr(m_pTime->elapsed());
+    }
+
+    renderTime();
+}
+
+void StartDialog::onStartTimer()
+{
+    m_bMeasuring = true;
+    m_pTime->restart();
+}
+
+void StartDialog::onStopTimer()
+{
+    m_bMeasuring = false;
+    qDebug() << "Stop timer.";
+}
+
+void StartDialog::onResetTimer()
+{
+    m_bMeasuring = false;
+    m_qsActTime = INIT_STR;
+}
+
+void StartDialog::onSetNumber(int nTime)
+{
+    m_qsActTime = toTimeStr(nTime);
+}
+
+void StartDialog::onSerialOpen(bool bSuccess)
+{
+    if (!bSuccess)
+    {
+        qDebug() << "Serial error confirmed.";
+        QMessageBox::information(this, "Serial", "Error opening serial");
+        return;
+    }
+    else
+    {
+        qDebug() << "Serial open confirmed.";
+        drawScene();
+        m_pAnimTimer->start(ANIM_PERIOD_MS);
+    }
 }

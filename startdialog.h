@@ -10,25 +10,26 @@
 #include <QGraphicsPixmapItem>
 #include <QMessageBox>
 #include <QTime>
-#include <QTimer>
 #include <QKeyEvent>
-#include <QDir>
+#include <QThread>
+#include <QFont>
+#include <QFontDatabase>
 
-//#include "communicator.h"
+#include "communicator.h"
+
 
 #define MAXSERIALS      30
-#define ANIM_PERIOD_MS  30
-#define READ_PERIOD_MS  10
+#define READ_PERIOD_MS  5
+#define ANIM_PERIOD_MS  16
 #define BG_PATH         ":/bg.jpg"
-#define INIT_STR        "00:00.00"
+#define FONT_PATH       ":/fonts/digital-7 (mono).ttf"
+#define INIT_STR        "00:00.000"
 #define START_KEY       32
 #define RESET_KEY       82
-
-#if defined(Q_OS_OSX)
-    #define FONT_SCALE  28.0f
-#else
-    #define FONT_SCALE  36.0f
-#endif
+#define TIMETEXT_WIDTH  1900
+#define TIMETEXT_YPOS   80
+#define SCENE_WIDTH     1920
+#define SCENE_HEIGHT    1080
 
 namespace Ui
 {
@@ -43,36 +44,44 @@ public:
     explicit StartDialog(QWidget *parent = 0);
     ~StartDialog();
 
-    void startTimer();
-    void stopTimer();
-    void resetTimer(bool reportReset);
-    void renderTime(int nMilliseconds);
+signals:
+    void sendInit(QString, int , int);
+    void sendReset();
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
 
 private slots:
     void on_pushButton_connect_clicked();
-    void on_anim_timer();
-    void on_serial_received();
+    void onAnimTimer();
+    void onStartTimer();
+    void onStopTimer();
+    void onResetTimer();
+    void onSetNumber(int nTime);
+    void onSerialOpen(bool bSuccess);
 
 private:
+    QString toTimeStr(int nMilliseconds);
+    void renderTime();
     void setMemberVariables();
     void drawScene();
+    void createCommunicator();
 
 private:
     Ui::SerialSettings* m_pUi;
     QSerialPort* m_pSerial;
     QGraphicsView* m_pView;
     QGraphicsScene* m_pScene;
-    QTimer* m_pAnimTimer;
-    QTimer* m_pReadTimer;
     QGraphicsTextItem* m_pTimeText;
+    QTimer* m_pAnimTimer;
     QTime* m_pTime;
-    int m_pFinalElapsed;
+    QThread* m_pReadThread;
+    Communicator* m_pCommunicator;
 
+    bool m_bCommunicatorCreated;
     bool m_bMeasuring;
-    bool m_bSerialOpen;
+
+    QString m_qsActTime;
 };
 
 #endif // STARTDIALOG_H
