@@ -44,6 +44,7 @@ void StartDialog::setMemberVariables()
 
     m_bCommunicatorCreated = false;
     m_bMeasuring = false;
+    m_bIsFullScreen = false;
     m_qsActTime = INIT_STR;
 }
 
@@ -87,6 +88,21 @@ bool StartDialog::eventFilter(QObject *obj, QEvent *event)
             emit sendReset();
             onResetTimer();
         }
+        else if (nKey == FULLSCREEN_KEY)
+        {
+            if (m_bIsFullScreen)
+            {
+                m_pView->showNormal();
+                m_bIsFullScreen = false;
+            }
+            else
+            {
+                m_pView->showFullScreen();
+                m_bIsFullScreen = true;
+            }
+
+            m_pView->fitInView(QRect(1, 1, SCENE_WIDTH - 2, SCENE_HEIGHT - 2));
+        }
     }
 
     return QObject::eventFilter(obj, event);
@@ -111,7 +127,7 @@ void StartDialog::drawScene()
     QFont digiFont(family);
 
     m_pScene->addPixmap(QPixmap::fromImage(image_bg));
-    m_pView->showFullScreen();
+    m_pView->show();
     m_pView->fitInView(QRect(1, 1, SCENE_WIDTH - 2, SCENE_HEIGHT - 2));
 
     m_pTimeText = m_pScene->addText(INIT_STR);
@@ -150,6 +166,8 @@ void StartDialog::on_pushButton_connect_clicked()
     createCommunicator();
     emit sendInit(m_pUi->comboBox_comport->currentText(),
                   m_pUi->spinBox_baud->value(), READ_PERIOD_MS);
+
+    m_pUi->pushButton_connect->setDisabled(true);
 }
 
 void StartDialog::onAnimTimer()
@@ -166,10 +184,12 @@ void StartDialog::onStartTimer()
 {
     m_bMeasuring = true;
     m_pTime->restart();
+    qDebug() << "Start timer.";
 }
 
 void StartDialog::onStopTimer()
 {
+    m_qsActTime = toTimeStr(m_pTime->elapsed());
     m_bMeasuring = false;
     qDebug() << "Stop timer.";
 }
@@ -178,6 +198,7 @@ void StartDialog::onResetTimer()
 {
     m_bMeasuring = false;
     m_qsActTime = INIT_STR;
+    qDebug() << "Reset timer.";
 }
 
 void StartDialog::onSetNumber(int nTime)

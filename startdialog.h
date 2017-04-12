@@ -26,6 +26,7 @@
 #define INIT_STR        "00:00.000"
 #define START_KEY       32
 #define RESET_KEY       82
+#define FULLSCREEN_KEY  70
 #define TIMETEXT_WIDTH  1900
 #define TIMETEXT_YPOS   80
 #define SCENE_WIDTH     1920
@@ -80,6 +81,7 @@ private:
 
     bool m_bCommunicatorCreated;
     bool m_bMeasuring;
+    bool m_bIsFullScreen;
 
     QString m_qsActTime;
 };
