@@ -20,5 +20,3 @@ HEADERS  += startdialog.h \
     communicator.h
 
 FORMS    += startdialog.ui
-
-#CONFIG += console

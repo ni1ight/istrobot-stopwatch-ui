@@ -17,6 +17,7 @@ void Communicator::onInit(QString qsPort, int nBaud, int nPeriod)
     m_pReadTimer = new QTimer(this);
 
     connect(m_pReadTimer, SIGNAL(timeout()), this, SLOT(onReadTimer()), Qt::DirectConnection);
+
     m_pSerial->setPortName(qsPort);
     m_pSerial->setBaudRate(nBaud);
     m_pSerial->setDataBits(QSerialPort::Data8);
