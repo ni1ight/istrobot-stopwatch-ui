@@ -28,7 +28,7 @@
 #define FONT_PATH       ":/fonts/digital-7 (mono).ttf"
 #define INIT_STR        "00:00.000"
 #define TIMETEXT_WIDTH  1900
-#define TIMETEXT_YPOS   80
+#define TIMETEXT_YPOS   100
 #define SCENE_WIDTH     1920
 #define SCENE_HEIGHT    1080
 

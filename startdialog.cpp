@@ -202,7 +202,7 @@ void StartDialog::readSettings()
         m_pUi->spinBox_baud->setValue(nBaudRate);
     }
 
-    if (qsComPort.size() > 0 && m_pUi->comboBox_comport->findText(qsComPort));
+    if (qsComPort.size() > 0 && m_pUi->comboBox_comport->findText(qsComPort))
     {
         m_pUi->comboBox_comport->setCurrentText(qsComPort);
     }
