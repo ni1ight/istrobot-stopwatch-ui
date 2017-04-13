@@ -188,13 +188,13 @@ void StartDialog::handleResize()
 
 void StartDialog::readSettings()
 {
-    QSettings settings("Freevision", "StopWatch");
+    QSettings settings(COMPANYNAME, PROJECTNAME);
     QString qsComPort;
     int nBaudRate;
 
-    settings.beginGroup("Serial Settings");
-    qsComPort = settings.value("Com Port", QString("")).toString();
-    nBaudRate = settings.value("Baud Rate", int(0)).toInt();
+    settings.beginGroup(SETTINGSNAME);
+    qsComPort = settings.value(COMPORTNAME, QString("")).toString();
+    nBaudRate = settings.value(BAUDRATENAME, int(0)).toInt();
     settings.endGroup();
 
     if (nBaudRate != 0)
@@ -210,11 +210,11 @@ void StartDialog::readSettings()
 
 void StartDialog::writeSettings()
 {
-    QSettings settings("Freevision", "StopWatch");
+    QSettings settings(COMPANYNAME, PROJECTNAME);
 
-    settings.beginGroup("Serial Settings");
-    settings.setValue("Com Port", m_pUi->comboBox_comport->currentText());
-    settings.setValue("Baud Rate", m_pUi->spinBox_baud->value());
+    settings.beginGroup(SETTINGSNAME);
+    settings.setValue(COMPORTNAME, m_pUi->comboBox_comport->currentText());
+    settings.setValue(BAUDRATENAME, m_pUi->spinBox_baud->value());
     settings.endGroup();
 }
 

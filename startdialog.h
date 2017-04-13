@@ -16,7 +16,11 @@
 
 #include "communicator.h"
 
-
+#define COMPANYNAME     "Freevision"
+#define PROJECTNAME     "StopWatch"
+#define SETTINGSNAME    "Serial Settings"
+#define COMPORTNAME     "Com Port"
+#define BAUDRATENAME    "Baud Rate"
 #define MAXSERIALS      30
 #define READ_PERIOD_MS  5
 #define ANIM_PERIOD_MS  16
