@@ -70,8 +70,9 @@ bool StartDialog::eventFilter(QObject *obj, QEvent *event)
         QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
         int nKey = keyEvent->key();
 
-        if (nKey == Qt::Key_Space)
+        switch(nKey)
         {
+        case Qt::Key_Space:
             if (m_bMeasuring)
             {
                 onStopTimer();
@@ -80,26 +81,31 @@ bool StartDialog::eventFilter(QObject *obj, QEvent *event)
             {
                 onStartTimer();
             }
-        }
-        else if (nKey == Qt::Key_R)
-        {
+            break;
+
+        case Qt::Key_R:
             emit sendReset();
             onResetTimer();
-        }
-        else if (nKey == Qt::Key_F)
-        {
+            break;
+
+        case Qt::Key_F:
             m_bIsFullScreen = !m_bIsFullScreen;
             updateScreenMode();
-        }
-        else if (nKey == Qt::Key_Escape)
-        {
+        break;
+
+        case Qt::Key_Escape:
             m_pView->close();
             this->close();
+        break;
         }
     }
     else if (event->type() == QEvent::Resize)
     {
         m_bSizeChanged = true;
+    }
+    else if (event->type() == QEvent::Close)
+    {
+        this->close();
     }
 
     return QObject::eventFilter(obj, event);
@@ -110,6 +116,7 @@ void StartDialog::drawScene()
     m_pView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_pView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_pView->setRenderHint(QPainter::Antialiasing);
+    m_pView->setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
 
     QImage image_bg(BG_PATH);
 
