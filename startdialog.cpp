@@ -30,11 +30,9 @@ void StartDialog::setMemberVariables()
         m_pUi->comboBox_comport->addItem(port.portName());
     }
 
-    m_pSerial = new QSerialPort(this);
     m_pScene = new QGraphicsScene();
     m_pView = new QGraphicsView(m_pScene);
     m_pAnimTimer = new QTimer(this);
-    m_pSerial = new QSerialPort(this);
     m_pTime = new QTime();
 
     connect(m_pAnimTimer, SIGNAL(timeout()), this, SLOT(onAnimTimer()));

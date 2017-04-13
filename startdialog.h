@@ -2,8 +2,6 @@
 #define STARTDIALOG_H
 
 #include <QDialog>
-#include <QSerialPort>
-#include <QSerialPortInfo>
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QPixmap>
@@ -67,7 +65,6 @@ private:
 
 private:
     Ui::SerialSettings* m_pUi;
-    QSerialPort* m_pSerial;
     QGraphicsView* m_pView;
     QGraphicsScene* m_pScene;
     QGraphicsTextItem* m_pTimeText;
