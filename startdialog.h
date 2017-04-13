@@ -12,6 +12,7 @@
 #include <QThread>
 #include <QFont>
 #include <QFontDatabase>
+#include <QSettings>
 
 #include "communicator.h"
 
@@ -65,6 +66,8 @@ private:
     void createCommunicator();
     void updateScreenMode();
     void handleResize();
+    void readSettings();
+    void writeSettings();
 
 private:
     Ui::SerialSettings* m_pUi;

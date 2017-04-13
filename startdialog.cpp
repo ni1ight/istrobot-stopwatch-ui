@@ -5,6 +5,7 @@ StartDialog::StartDialog(QWidget *parent) : QDialog(parent), m_pUi(new Ui::Seria
 {
     m_pUi->setupUi(this);
     setMemberVariables();
+    readSettings();
 }
 
 StartDialog::~StartDialog()
@@ -13,6 +14,7 @@ StartDialog::~StartDialog()
     {
         m_pReadThread->terminate();
         m_pReadThread->deleteLater();
+        writeSettings();
     }
 
     m_pAnimTimer->stop();
@@ -182,6 +184,38 @@ void StartDialog::handleResize()
 {
     m_pView->fitInView(QRect(1, 1, SCENE_WIDTH - 2, SCENE_HEIGHT - 2), Qt::KeepAspectRatio);
     m_bSizeChanged = false;
+}
+
+void StartDialog::readSettings()
+{
+    QSettings settings("Freevision", "StopWatch");
+    QString qsComPort;
+    int nBaudRate;
+
+    settings.beginGroup("Serial Settings");
+    qsComPort = settings.value("Com Port", QString("")).toString();
+    nBaudRate = settings.value("Baud Rate", int(0)).toInt();
+    settings.endGroup();
+
+    if (nBaudRate != 0)
+    {
+        m_pUi->spinBox_baud->setValue(nBaudRate);
+    }
+
+    if (qsComPort.size() > 0 && m_pUi->comboBox_comport->findText(qsComPort));
+    {
+        m_pUi->comboBox_comport->setCurrentText(qsComPort);
+    }
+}
+
+void StartDialog::writeSettings()
+{
+    QSettings settings("Freevision", "StopWatch");
+
+    settings.beginGroup("Serial Settings");
+    settings.setValue("Com Port", m_pUi->comboBox_comport->currentText());
+    settings.setValue("Baud Rate", m_pUi->spinBox_baud->value());
+    settings.endGroup();
 }
 
 void StartDialog::on_pushButton_connect_clicked()
