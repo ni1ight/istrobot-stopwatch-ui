@@ -49,6 +49,7 @@ protected:
 
 private slots:
     void on_pushButton_connect_clicked();
+    void on_pushButton_offline_clicked();
     void onAnimTimer();
     void onStartTimer();
     void onStopTimer();

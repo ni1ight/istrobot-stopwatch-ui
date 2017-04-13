@@ -29,7 +29,6 @@ void StartDialog::setMemberVariables()
     {
         m_pUi->comboBox_comport->addItem(port.portName());
     }
-    m_pUi->comboBox_comport->addItem(NONE);
     m_pScene = new QGraphicsScene();
     m_pView = new QGraphicsView(m_pScene);
     m_pAnimTimer = new QTimer(this);
@@ -170,6 +169,14 @@ void StartDialog::on_pushButton_connect_clicked()
                   m_pUi->spinBox_baud->value(), READ_PERIOD_MS);
 
     m_pUi->pushButton_connect->setDisabled(true);
+    m_pUi->pushButton_offline->setDisabled(true);
+}
+
+void StartDialog::on_pushButton_offline_clicked(){
+     createCommunicator();
+     emit sendInit(NONE, 0, 0);
+     m_pUi->pushButton_connect->setDisabled(true);
+     m_pUi->pushButton_offline->setDisabled(true);
 }
 
 void StartDialog::onAnimTimer()
