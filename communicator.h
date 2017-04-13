@@ -7,7 +7,6 @@
 #include <QSerialPort>
 #include <QSerialPortInfo>
 #include <QTimer>
-#include <QDebug>
 
 class Communicator : public QObject
 {

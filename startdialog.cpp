@@ -102,7 +102,8 @@ bool StartDialog::eventFilter(QObject *obj, QEvent *event)
         }
         else if (nKey == Qt::Key_Escape)
         {
-            this->deleteLater();
+            m_pView->close();
+            this->close();
         }
     }
 
@@ -172,9 +173,11 @@ void StartDialog::on_pushButton_connect_clicked()
     m_pUi->pushButton_offline->setDisabled(true);
 }
 
-void StartDialog::on_pushButton_offline_clicked(){
-     createCommunicator();
-     emit sendInit(NONE, 0, 0);
+void StartDialog::on_pushButton_offline_clicked()
+{
+     //createCommunicator();
+     //emit sendInit(NONE, 0, 0);
+     onSerialOpen(true);
      m_pUi->pushButton_connect->setDisabled(true);
      m_pUi->pushButton_offline->setDisabled(true);
 }
@@ -193,20 +196,17 @@ void StartDialog::onStartTimer()
 {
     m_bMeasuring = true;
     m_pTime->restart();
-    qDebug() << "Start timer.";
 }
 
 void StartDialog::onStopTimer()
 {
     m_bMeasuring = false;
-    qDebug() << "Stop timer.";
 }
 
 void StartDialog::onResetTimer()
 {
     m_bMeasuring = false;
     m_qsActTime = INIT_STR;
-    qDebug() << "Reset timer.";
 }
 
 void StartDialog::onSetNumber(int nTime)
@@ -218,13 +218,11 @@ void StartDialog::onSerialOpen(bool bSuccess)
 {
     if (!bSuccess)
     {
-        qDebug() << "Serial error confirmed.";
         QMessageBox::information(this, "Serial", "Error opening serial");
         return;
     }
     else
     {
-        qDebug() << "Serial open confirmed.";
         drawScene();
         m_pAnimTimer->start(ANIM_PERIOD_MS);
     }
