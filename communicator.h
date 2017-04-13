@@ -1,6 +1,8 @@
 #ifndef COMMUNICATOR_H
 #define COMMUNICATOR_H
 
+#define NONE "Offline Mode"
+
 #include <QObject>
 #include <QSerialPort>
 #include <QSerialPortInfo>

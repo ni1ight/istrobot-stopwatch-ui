@@ -29,7 +29,7 @@ void StartDialog::setMemberVariables()
     {
         m_pUi->comboBox_comport->addItem(port.portName());
     }
-
+    m_pUi->comboBox_comport->addItem(NONE);
     m_pScene = new QGraphicsScene();
     m_pView = new QGraphicsView(m_pScene);
     m_pAnimTimer = new QTimer(this);
