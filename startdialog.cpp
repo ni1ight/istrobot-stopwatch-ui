@@ -41,7 +41,8 @@ void StartDialog::setMemberVariables()
 
     m_bCommunicatorCreated = false;
     m_bMeasuring = false;
-    m_bIsFullScreen = false;
+    m_bIsFullScreen = true;
+    m_bSizeChanged = true;
     m_qsActTime = INIT_STR;
 }
 
@@ -87,24 +88,18 @@ bool StartDialog::eventFilter(QObject *obj, QEvent *event)
         }
         else if (nKey == Qt::Key_F)
         {
-            if (m_bIsFullScreen)
-            {
-                m_pView->showNormal();
-                m_bIsFullScreen = false;
-            }
-            else
-            {
-                m_pView->showFullScreen();
-                m_bIsFullScreen = true;
-            }
-
-            m_pView->fitInView(QRect(1, 1, SCENE_WIDTH - 2, SCENE_HEIGHT - 2));
+            m_bIsFullScreen = !m_bIsFullScreen;
+            updateScreenMode();
         }
         else if (nKey == Qt::Key_Escape)
         {
             m_pView->close();
             this->close();
         }
+    }
+    else if (event->type() == QEvent::Resize)
+    {
+        m_bSizeChanged = true;
     }
 
     return QObject::eventFilter(obj, event);
@@ -129,8 +124,7 @@ void StartDialog::drawScene()
     QFont digiFont(family);
 
     m_pScene->addPixmap(QPixmap::fromImage(image_bg));
-    m_pView->show();
-    m_pView->fitInView(QRect(1, 1, SCENE_WIDTH - 2, SCENE_HEIGHT - 2));
+    updateScreenMode();
 
     m_pTimeText = m_pScene->addText(INIT_STR);
     m_pTimeText->setFont(digiFont);
@@ -163,6 +157,26 @@ void StartDialog::createCommunicator()
     m_bCommunicatorCreated = true;
 }
 
+void StartDialog::updateScreenMode()
+{
+    if (m_bIsFullScreen)
+    {
+        m_pView->showFullScreen();
+    }
+    else
+    {
+        m_pView->showNormal();
+    }
+
+    m_bSizeChanged = true;
+}
+
+void StartDialog::handleResize()
+{
+    m_pView->fitInView(QRect(1, 1, SCENE_WIDTH - 2, SCENE_HEIGHT - 2), Qt::KeepAspectRatio);
+    m_bSizeChanged = false;
+}
+
 void StartDialog::on_pushButton_connect_clicked()
 {
     createCommunicator();
@@ -175,8 +189,6 @@ void StartDialog::on_pushButton_connect_clicked()
 
 void StartDialog::on_pushButton_offline_clicked()
 {
-     //createCommunicator();
-     //emit sendInit(NONE, 0, 0);
      onSerialOpen(true);
      m_pUi->pushButton_connect->setDisabled(true);
      m_pUi->pushButton_offline->setDisabled(true);
@@ -187,6 +199,11 @@ void StartDialog::onAnimTimer()
     if (m_bMeasuring)
     {
         m_qsActTime = toTimeStr(m_pTime->elapsed());
+    }
+
+    if (m_bSizeChanged)
+    {
+        handleResize();
     }
 
     renderTime();

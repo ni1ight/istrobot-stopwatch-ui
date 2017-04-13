@@ -63,6 +63,8 @@ private:
     void setMemberVariables();
     void drawScene();
     void createCommunicator();
+    void updateScreenMode();
+    void handleResize();
 
 private:
     Ui::SerialSettings* m_pUi;
@@ -77,6 +79,7 @@ private:
     bool m_bCommunicatorCreated;
     bool m_bMeasuring;
     bool m_bIsFullScreen;
+    bool m_bSizeChanged;
 
     QString m_qsActTime;
 };
