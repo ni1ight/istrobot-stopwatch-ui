@@ -91,12 +91,12 @@ bool StartDialog::eventFilter(QObject *obj, QEvent *event)
         case Qt::Key_F:
             m_bIsFullScreen = !m_bIsFullScreen;
             updateScreenMode();
-        break;
+            break;
 
         case Qt::Key_Escape:
             m_pView->close();
             this->close();
-        break;
+            break;
         }
     }
     else if (event->type() == QEvent::Resize)
