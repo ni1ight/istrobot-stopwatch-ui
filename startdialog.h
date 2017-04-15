@@ -14,6 +14,14 @@
 #include <QFontDatabase>
 #include <QSettings>
 
+#ifdef _WIN32
+    #include "windows.h"
+#elif __APPLE__
+    // apple, todo
+#elif __linux
+    // linux, todo
+#endif
+
 #include "communicator.h"
 
 #define COMPANYNAME     "Freevision"
@@ -74,6 +82,8 @@ private:
     void handleResize();
     void readSettings();
     void writeSettings();
+    void enableScreensaver();
+    void disableScreensaver();
 
 private:
     Ui::SerialSettings* m_pUi;

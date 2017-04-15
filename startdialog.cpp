@@ -6,10 +6,13 @@ StartDialog::StartDialog(QWidget *parent) : QDialog(parent), m_pUi(new Ui::Seria
     m_pUi->setupUi(this);
     setMemberVariables();
     readSettings();
+    disableScreensaver();
 }
 
 StartDialog::~StartDialog()
 {
+    enableScreensaver();
+
     if (m_bCommunicatorCreated)
     {
         m_pReadThread->terminate();
@@ -232,6 +235,28 @@ void StartDialog::writeSettings()
     settings.setValue(COMPORTNAME, m_pUi->comboBox_comport->currentText());
     settings.setValue(BAUDRATENAME, m_pUi->spinBox_baud->value());
     settings.endGroup();
+}
+
+void StartDialog::enableScreensaver()
+{
+#ifdef _WIN32
+    SystemParametersInfo(SPI_SETSCREENSAVEACTIVE, TRUE, 0, 0);
+#elif __APPLE__
+    // todo
+#elif __linux
+    // todo
+#endif
+}
+
+void StartDialog::disableScreensaver()
+{
+#ifdef _WIN32
+    SystemParametersInfo(SPI_SETSCREENSAVEACTIVE, FALSE, 0, 0);
+#elif __APPLE__
+    // todo
+#elif __linux
+    // todo
+#endif
 }
 
 void StartDialog::on_pushButton_connect_clicked()
