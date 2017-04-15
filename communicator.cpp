@@ -36,9 +36,9 @@ void Communicator::onInit(QString qsPort, int nBaud, int nPeriod)
     }
 }
 
-void Communicator::onSendReset()
+void Communicator::onSendMsg(QString qsMsg)
 {
-    m_pSerial->write("R\n");
+    m_pSerial->write(qsMsg.toLocal8Bit());
 }
 
 void Communicator::onReadTimer()
@@ -65,6 +65,11 @@ void Communicator::onReadTimer()
             qsMessage = qsMessage.mid(2);
             emit timerFinish();
             emit setNumber(qsMessage.toInt());
+        }
+        else if (qsMessage.startsWith("0"))
+        {
+            qsMessage = qsMessage.mid(2);
+            emit setDelay(qsMessage.toInt());
         }
     }
 }

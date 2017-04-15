@@ -72,9 +72,8 @@ bool StartDialog::eventFilter(QObject *obj, QEvent *event)
         QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
         int nKey = keyEvent->key();
 
-        switch(nKey)
+        if (nKey == Qt::Key_Space)
         {
-        case Qt::Key_Space:
             if (m_bMeasuring)
             {
                 onStopTimer();
@@ -83,22 +82,32 @@ bool StartDialog::eventFilter(QObject *obj, QEvent *event)
             {
                 onStartTimer();
             }
-            break;
-
-        case Qt::Key_R:
-            emit sendReset();
+        }
+        else if (nKey == Qt::Key_R)
+        {
+            emit sendMsg("R\n");
             onResetTimer();
-            break;
-
-        case Qt::Key_F:
+        }
+        else if (nKey == Qt::Key_F)
+        {
             m_bIsFullScreen = !m_bIsFullScreen;
             updateScreenMode();
-            break;
-
-        case Qt::Key_Escape:
+        }
+        else if (nKey == Qt::Key_Escape)
+        {
             m_pView->close();
             this->close();
-            break;
+        }
+        else if (nKey == Qt::Key_Control)
+        {
+            bool bVisible = m_pDelayText->isVisible();
+            m_pDelayText->setVisible(!bVisible);
+        }
+        else if (nKey >= 48 && nKey <= 57)
+        {
+            QString qsMessage;
+            qsMessage.sprintf("0 %d\n", nKey - 48);
+            sendMsg(qsMessage);
         }
     }
     else if (event->type() == QEvent::Resize)
@@ -143,6 +152,13 @@ void StartDialog::drawScene()
 
     m_pTimeText->setPos((SCENE_WIDTH - TIMETEXT_WIDTH) / 2, TIMETEXT_YPOS);
     m_pTimeText->setScale(TIMETEXT_WIDTH / box.width());
+
+    m_pDelayText = m_pScene->addText(DELAY_STR);
+    m_pDelayText->setFont(digiFont);
+    m_pDelayText->setDefaultTextColor(Qt::white);
+    m_pDelayText->setPos(0.2f, 0.2f);
+    m_pDelayText->setScale(3.0f);
+    m_pDelayText->setVisible(false);
 }
 
 void StartDialog::createCommunicator()
@@ -156,7 +172,7 @@ void StartDialog::createCommunicator()
     connect(m_pCommunicator, SIGNAL(setNumber(int)), this, SLOT(onSetNumber(int)));
     connect(m_pCommunicator, SIGNAL(reportOpen(bool)), this, SLOT(onSerialOpen(bool)));
     connect(this, SIGNAL(sendInit(QString, int, int)), m_pCommunicator, SLOT(onInit(QString, int, int)));
-    connect(this, SIGNAL(sendReset()), m_pCommunicator, SLOT(onSendReset()));
+    connect(this, SIGNAL(sendMsg(QString)), m_pCommunicator, SLOT(onSendMsg(QString)));
 
     m_pCommunicator->moveToThread(m_pReadThread);
 
@@ -265,6 +281,14 @@ void StartDialog::onResetTimer()
 {
     m_bMeasuring = false;
     m_qsActTime = INIT_STR;
+}
+
+void StartDialog::onSetDelay(int nSecs)
+{
+    QString qsDelay(DELAY_STR);
+    qsDelay.append(QString::number(nSecs));
+    qsDelay.append(" sec");
+    m_pDelayText->setPlainText(qsDelay);
 }
 
 void StartDialog::onSetNumber(int nTime)

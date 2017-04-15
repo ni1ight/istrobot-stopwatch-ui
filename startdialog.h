@@ -27,6 +27,7 @@
 #define BG_PATH         ":/bg.jpg"
 #define FONT_PATH       ":/fonts/digital-7 (mono).ttf"
 #define INIT_STR        "00:00.000"
+#define DELAY_STR       "Delay: "
 #define TIMETEXT_WIDTH  1900
 #define TIMETEXT_YPOS   100
 #define SCENE_WIDTH     1920
@@ -47,7 +48,7 @@ public:
 
 signals:
     void sendInit(QString, int , int);
-    void sendReset();
+    void sendMsg(QString);
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
@@ -59,6 +60,7 @@ private slots:
     void onStartTimer();
     void onStopTimer();
     void onResetTimer();
+    void onSetDelay(int nSecs);
     void onSetNumber(int nTime);
     void onSerialOpen(bool bSuccess);
 
@@ -78,6 +80,7 @@ private:
     QGraphicsView* m_pView;
     QGraphicsScene* m_pScene;
     QGraphicsTextItem* m_pTimeText;
+    QGraphicsTextItem* m_pDelayText;
     QTimer* m_pAnimTimer;
     QTime* m_pTime;
     QThread* m_pReadThread;

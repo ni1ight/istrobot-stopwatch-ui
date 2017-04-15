@@ -20,12 +20,13 @@ signals:
     void timerStart();
     void timerFinish();
     void timerReset();
+    void setDelay(int);
     void setNumber(int);
     void reportOpen(bool);
 
 public slots:
     void onInit(QString qsPort, int nBaud, int nPeriod);
-    void onSendReset();
+    void onSendMsg(QString qsMsg);
     void onReadTimer();
 
 private:
