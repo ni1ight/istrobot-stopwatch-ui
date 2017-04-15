@@ -23,4 +23,5 @@ FORMS    += startdialog.ui
 
 mac {
     LIBS += -framework AppKit -framework IOKit
+    ICON = icons/icon.icns
 }
