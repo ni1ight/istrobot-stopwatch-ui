@@ -131,6 +131,7 @@ void StartDialog::drawScene()
     m_pView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_pView->setRenderHint(QPainter::Antialiasing);
     m_pView->setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
+    m_pView->setWindowTitle(PROJECTNAME);
 
     QImage image_bg(BG_PATH);
 
