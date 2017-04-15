@@ -239,22 +239,22 @@ void StartDialog::writeSettings()
 
 void StartDialog::enableScreensaver()
 {
-#ifdef _WIN32
+#if defined(_WIN32)
     SystemParametersInfo(SPI_SETSCREENSAVEACTIVE, TRUE, 0, 0);
-#elif __APPLE__
+#elif defined(__APPLE__)
     // todo
-#elif __linux
+#elif defined(__linux)
     // todo
 #endif
 }
 
 void StartDialog::disableScreensaver()
 {
-#ifdef _WIN32
+#if defined(_WIN32)
     SystemParametersInfo(SPI_SETSCREENSAVEACTIVE, FALSE, 0, 0);
-#elif __APPLE__
+#elif defined(__APPLE__)
     // todo
-#elif __linux
+#elif defined(__linux)
     // todo
 #endif
 }

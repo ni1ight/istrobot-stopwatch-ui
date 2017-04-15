@@ -14,11 +14,11 @@
 #include <QFontDatabase>
 #include <QSettings>
 
-#ifdef _WIN32
+#if defined(_WIN32)
     #include "windows.h"
-#elif __APPLE__
+#elif defined(__APPLE__)
     // apple, todo
-#elif __linux
+#elif defined(__linux)
     // linux, todo
 #endif
 
