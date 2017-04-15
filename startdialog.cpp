@@ -103,10 +103,10 @@ bool StartDialog::eventFilter(QObject *obj, QEvent *event)
             bool bVisible = m_pDelayText->isVisible();
             m_pDelayText->setVisible(!bVisible);
         }
-        else if (nKey >= 48 && nKey <= 57)
+        else if (nKey >= Qt::Key_0 && nKey <= Qt::Key_9)
         {
             QString qsMessage;
-            qsMessage.sprintf("0 %d\n", nKey - 48);
+            qsMessage.sprintf("0 %d\n", nKey - Qt::Key_0);
             sendMsg(qsMessage);
         }
     }
