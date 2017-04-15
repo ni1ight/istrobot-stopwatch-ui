@@ -7,6 +7,8 @@ StartDialog::StartDialog(QWidget *parent) : QDialog(parent), m_pUi(new Ui::Seria
     setMemberVariables();
     readSettings();
     disableScreensaver();
+    setWindowTitle(PROJECTNAME);
+    QCoreApplication::setApplicationName(PROJECTNAME);
 }
 
 StartDialog::~StartDialog()
