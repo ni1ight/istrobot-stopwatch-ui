@@ -25,3 +25,7 @@ mac {
     LIBS += -framework AppKit -framework IOKit
     ICON = icons/icon.icns
 }
+
+win32 {
+    RC_ICONS = icons/icon.ico
+}
