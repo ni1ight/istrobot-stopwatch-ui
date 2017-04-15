@@ -101,7 +101,7 @@ bool StartDialog::eventFilter(QObject *obj, QEvent *event)
             m_pView->close();
             this->close();
         }
-        else if (nKey == Qt::Key_Control)
+        else if (nKey == Qt::Key_Control || nKey == Qt::Key_Alt)
         {
             bool bVisible = m_pDelayText->isVisible();
             m_pDelayText->setVisible(!bVisible);
@@ -172,6 +172,7 @@ void StartDialog::createCommunicator()
     connect(m_pCommunicator, SIGNAL(timerStart()), this, SLOT(onStartTimer()));
     connect(m_pCommunicator, SIGNAL(timerFinish()), this, SLOT(onStopTimer()));
     connect(m_pCommunicator, SIGNAL(timerReset()), this, SLOT(onResetTimer()));
+    connect(m_pCommunicator, SIGNAL(setDelay(int)), this, SLOT(onSetDelay(int)));
     connect(m_pCommunicator, SIGNAL(setNumber(int)), this, SLOT(onSetNumber(int)));
     connect(m_pCommunicator, SIGNAL(reportOpen(bool)), this, SLOT(onSerialOpen(bool)));
     connect(this, SIGNAL(sendInit(QString, int, int)), m_pCommunicator, SLOT(onInit(QString, int, int)));
