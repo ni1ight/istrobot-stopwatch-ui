@@ -20,3 +20,7 @@ HEADERS  += startdialog.h \
     communicator.h
 
 FORMS    += startdialog.ui
+
+mac {
+    LIBS += -framework AppKit -framework IOKit
+}

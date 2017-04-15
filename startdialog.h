@@ -17,7 +17,7 @@
 #if defined(_WIN32)
     #include "windows.h"
 #elif defined(__APPLE__)
-    // apple, todo
+    #import <IOKit/pwr_mgt/IOPMLib.h>
 #elif defined(__linux)
     // linux, todo
 #endif

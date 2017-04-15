@@ -64,7 +64,7 @@ QString StartDialog::toTimeStr(int nMilliseconds)
 }
 
 void StartDialog::renderTime()
-{    
+{
     m_pTimeText->setPlainText(m_qsActTime);
 }
 
@@ -254,7 +254,12 @@ void StartDialog::disableScreensaver()
 #if defined(_WIN32)
     SystemParametersInfo(SPI_SETSCREENSAVEACTIVE, FALSE, 0, 0);
 #elif defined(__APPLE__)
-    // todo
+    IOPMAssertionID assertionID;
+    IOReturn success = IOPMAssertionCreateWithName(kIOPMAssertionTypeNoDisplaySleep, kIOPMAssertionLevelOn, CFSTR("Stopwatch"), &assertionID);
+    if (success == kIOReturnSuccess)
+      qDebug("Sleep prevented");
+    else
+      qDebug("Unable to prevent sleeping!");
 #elif defined(__linux)
     // todo
 #endif
