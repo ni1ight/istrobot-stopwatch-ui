@@ -131,3 +131,8 @@ CMakeLists.txt.user*
 # Qt Creator backups
 
 # End of https://www.gitignore.io/api/c,qt,c++,qtcreator
+
+# build folder
+build/
+release/
+debug/
