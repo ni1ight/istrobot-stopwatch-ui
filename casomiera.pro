@@ -21,6 +21,10 @@ HEADERS  += startdialog.h \
 
 FORMS    += startdialog.ui
 
+unix {
+    QMAKE_POST_LINK  = 'cp ../scripts/install_unity.sh .'
+}
+
 mac {
     LIBS += -framework AppKit -framework IOKit
     ICON = icons/icon.icns

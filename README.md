@@ -5,6 +5,7 @@
 	cd build
 	qmake ..
 	make
+	sudo ./install_unity.sh #For unity desktop, install and create desktop icon
 
 ## RUNNING ##
 
