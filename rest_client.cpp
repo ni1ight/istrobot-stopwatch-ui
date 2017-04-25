@@ -3,12 +3,19 @@
 RestClient::RestClient() : manager(new QNetworkAccessManager)
 {
 	QFile file(configFile);
-	file.open(QIODevice::ReadOnly);
-	QTextStream in(&file);	
-	url = in.readLine();
+	url = QString();
+	if (file.exists()){
+		file.open(QIODevice::ReadOnly);
+		QTextStream in(&file);	
+		url = in.readLine();
+	}
 }
 
 int RestClient::sendData(int status, long time){
+	if (url.isNull()){
+		qDebug() << "[WARN] missing url configuration, url-config.ini file not exists or cannnot read file";
+		return -1;
+	}
 	QUrl qurl(url);
 	QNetworkRequest request(qurl);
 	request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
