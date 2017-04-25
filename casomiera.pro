@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui serialport
+QT       += core gui serialport network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -14,10 +14,12 @@ RESOURCES = startdialog.qrc
 
 SOURCES += main.cpp\
         startdialog.cpp \
-    communicator.cpp
+    communicator.cpp \
+    rest_client.cpp
 
 HEADERS  += startdialog.h \
-    communicator.h
+    communicator.h \
+    rest_client.h
 
 FORMS    += startdialog.ui
 

@@ -23,6 +23,7 @@
 #endif
 
 #include "communicator.h"
+#include "rest_client.h"
 
 #define COMPANYNAME     "Freevision"
 #define PROJECTNAME     "StopWatch"
@@ -95,6 +96,7 @@ private:
     QTime* m_pTime;
     QThread* m_pReadThread;
     Communicator* m_pCommunicator;
+    RestClient* rest;
 
     bool m_bCommunicatorCreated;
     bool m_bMeasuring;

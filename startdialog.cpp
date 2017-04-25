@@ -35,6 +35,7 @@ void StartDialog::setMemberVariables()
     {
         m_pUi->comboBox_comport->addItem(port.portName());
     }
+    rest = new RestClient;
     m_pScene = new QGraphicsScene();
     m_pView = new QGraphicsView(m_pScene);
     m_pAnimTimer = new QTimer(this);
@@ -307,11 +308,15 @@ void StartDialog::onStartTimer()
 
 void StartDialog::onStopTimer()
 {
+    rest->sendData(STATUS_OK, m_pTime->elapsed());
     m_bMeasuring = false;
 }
 
 void StartDialog::onResetTimer()
 {
+    if (m_bMeasuring) {
+	rest->sendData(STATUS_FAIL, -1);
+    }
     m_bMeasuring = false;
     m_qsActTime = INIT_STR;
 }
