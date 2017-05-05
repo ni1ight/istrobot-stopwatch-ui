@@ -9,8 +9,10 @@
 #include <QUrl>
 #include <QFile>
 
-#define STATUS_OK 0
-#define STATUS_FAIL 1
+#define STATUS_START 0
+#define STATUS_OK 1
+#define STATUS_FAIL 2
+#define API "99243319c28a0e0e9ef6"
 
 class RestClient {
 private:
@@ -20,7 +22,7 @@ private:
 	const QString configFile = QString("url-config.ini");
 public:
 	RestClient();
-	int sendData(int status, long time);
+	int sendData(int status, QString time);
 };
 
 #endif

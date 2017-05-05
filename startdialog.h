@@ -102,6 +102,7 @@ private:
     bool m_bMeasuring;
     bool m_bIsFullScreen;
     bool m_bSizeChanged;
+    long nTime;
 
     QString m_qsActTime;
 };

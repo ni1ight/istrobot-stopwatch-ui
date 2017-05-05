@@ -10,3 +10,9 @@
 ## RUNNING ##
 
 	./StopWatch
+
+
+## REST API Integration ##
+
+	create url-config.ini file
+	put URL, which accept application/x-www-form-urlencoded method with parameters API, command and value.

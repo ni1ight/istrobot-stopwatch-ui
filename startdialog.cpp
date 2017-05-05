@@ -40,6 +40,7 @@ void StartDialog::setMemberVariables()
     m_pView = new QGraphicsView(m_pScene);
     m_pAnimTimer = new QTimer(this);
     m_pTime = new QTime();
+    nTime = 0;
 
     connect(m_pAnimTimer, SIGNAL(timeout()), this, SLOT(onAnimTimer()));
 
@@ -67,7 +68,7 @@ QString StartDialog::toTimeStr(int nMilliseconds)
 
 void StartDialog::renderTime()
 {
-    m_pTimeText->setPlainText(m_qsActTime);
+    m_pTimeText->setPlainText(toTimeStr(nTime));
 }
 
 bool StartDialog::eventFilter(QObject *obj, QEvent *event)
@@ -289,7 +290,7 @@ void StartDialog::onAnimTimer()
 {
     if (m_bMeasuring)
     {
-        m_qsActTime = toTimeStr(m_pTime->elapsed());
+	nTime = m_pTime -> elapsed();
     }
 
     if (m_bSizeChanged)
@@ -304,21 +305,22 @@ void StartDialog::onStartTimer()
 {
     m_bMeasuring = true;
     m_pTime->restart();
+    rest->sendData(STATUS_START, INIT_STR);
 }
 
 void StartDialog::onStopTimer()
 {
-    rest->sendData(STATUS_OK, m_pTime->elapsed());
     m_bMeasuring = false;
+    rest->sendData(STATUS_OK, toTimeStr(nTime));
 }
 
 void StartDialog::onResetTimer()
 {
     if (m_bMeasuring) {
-	rest->sendData(STATUS_FAIL, -1);
+	rest->sendData(STATUS_FAIL, INIT_STR);
     }
     m_bMeasuring = false;
-    m_qsActTime = INIT_STR;
+    nTime = 0;
 }
 
 void StartDialog::onSetDelay(int nSecs)
